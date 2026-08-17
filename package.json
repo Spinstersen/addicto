@@ -1,0 +1,23 @@
+{
+  "name": "addicto",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Local, free, ADHD-first PWA for quitting porn — evidence-based (CBT + SMART Recovery methods), fully offline, no cloud.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^5.0.0",
+    "svelte": "^5.0.0",
+    "vite": "^6.0.0",
+    "vite-plugin-pwa": "^0.21.0"
+  },
+  "dependencies": {
+    "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
+    "dexie": "^4.0.0"
+  }
+}
