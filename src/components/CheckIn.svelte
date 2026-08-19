@@ -36,7 +36,7 @@
 
   async function save() {
     await addCheckin({ urge, mood })
-    if (slipUrge != null || slipMood || slipNote.trim() || slipEsc.length) {
+    if (showSlip) {
       await addSlip({ urge: slipUrge, mood: slipMood, note: slipNote.trim(), escalation: [...slipEsc], sleepBad: slipSleepBad })
     }
     const today = new Date().toISOString().slice(0, 10)
@@ -44,7 +44,7 @@
     await load()
     saved = true
     vibrate(50)
-    if (slipUrge != null || slipMood || slipNote.trim() || slipEsc.length) {
+    if (showSlip) {
       compassionIdx = Math.floor(Math.random() * SELF_COMPASSION.length)
     }
     setTimeout(() => {
@@ -179,7 +179,7 @@
 {#if saved}
   <div class="shell flat">
     <div class="core center">
-      {#if compassionIdx >= 0 && (slipUrge != null || slipMood || slipNote.trim() || slipEsc.length)}
+      {#if compassionIdx >= 0 && showSlip}
         <div class="big-glyph" style="margin-bottom:14px;"><Icon name="heart" size={30} /></div>
         <p style="font-weight:600; font-size:1.02rem; line-height:1.5;">{t(SELF_COMPASSION[compassionIdx])}</p>
         <p class="faint" style="font-size:0.82rem; margin-top:10px;">{t('Logged ✓ — nothing reset, nothing judged.')}</p>

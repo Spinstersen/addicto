@@ -192,7 +192,8 @@
 <style>
   .calc {
     max-width: 420px;
-    margin: 0 auto;
+    width: 100%;
+    align-self: center;
     min-height: 100vh;
     min-height: 100dvh;
     display: flex;
