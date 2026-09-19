@@ -193,7 +193,7 @@
     <span class="eyebrow on"><Icon name="book" size={14} />{overallPct}%</span>
   {/snippet}
 
-  <ScreenHeader eyebrow={t('6 weeks · ~10 min each')} title={t('The rewiring course.')} {go} right={pctBadge} />
+  <ScreenHeader eyebrow={t('6 weeks · ~10 min each')} title={t('The change skills course.')} {go} right={pctBadge} />
 
   {#if flash}
     <div class="callout acc" style="margin-bottom:12px;"><Icon name="check" size={18} /><div>{flash}</div></div>
@@ -206,7 +206,7 @@
         {t('Six weeks. Each week has three short steps that build on the last. Every step explains the idea in plain language, then gives you a thing to actually do — right here in the app.')}
       </p>
       <div class="progress" style="margin-top:14px;"><div style="width:{overallPct}%;"></div></div>
-      <div class="faint" style="font-size:0.74rem; margin-top:6px;">{t('The trial\'s finding: people who finished saw the biggest reductions. Finishing is the whole game.')}</div>
+      <div class="faint" style="font-size:0.74rem; margin-top:6px;">{t('Hands-Off showed promising preliminary results, but adherence was low. Keep sessions small and return without judgment if you pause.')}</div>
     </div>
   </div>
 

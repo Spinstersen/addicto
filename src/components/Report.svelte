@@ -4,6 +4,7 @@
   import { formatDateShort } from '../lib/helpers.js'
   import { vibrate } from '../lib/helpers.js'
   import { t, tf } from '../lib/i18n.svelte.js'
+  import { copingInsights, weeklyReview } from '../lib/insights.js'
   import Icon from '../lib/Icon.svelte'
   import ScreenHeader from './ScreenHeader.svelte'
 
@@ -48,11 +49,13 @@
   const maxSlips = $derived(Math.max(1, ...byDay.map((d) => d.slips)))
   const maxCheckins = $derived(Math.max(1, ...byDay.map((d) => d.checkins)))
 
-  const report = $derived(patternReport())
+  const report = $derived(patternReport(rangeSlips, rangeCheckins))
   const streakDays = $derived(currentStreakDays())
   const trend = $derived(urgeTrend())
   const week = $derived(weekActivity())
   const m = $derived(milestone())
+  const coping = $derived(copingInsights(data.panics))
+  const plan = $derived(weeklyReview({ slips: data.slips, checkins: data.checkins, panics: data.panics }))
 
   const trendDir = $derived.by(() => {
     if (!trend || trend.recent == null || trend.prior == null) return null
@@ -62,10 +65,10 @@
   })
 
   const weekNote = $derived(
-    week.slips === 0 && week.checkins >= 4 ? 'A clean week with real self-monitoring. That is the whole method working.'
-      : week.slips === 0 ? 'No slips this week. Keep logging so the data stays honest.'
-      : week.slips <= 2 ? 'Few slips, and each one logged = each one learned from.'
-      : 'A heavy week. Drop the judgement — the levers (sleep, movement, friction) are what turn this around.'
+    week.slips === 0 && week.checkins >= 4 ? 'You practiced consistent self-monitoring this week. Notice what made that possible.'
+      : week.slips === 0 ? 'No slips logged this week. Keep tracking context so the picture stays useful.'
+      : week.slips <= 2 ? 'You logged each setback. Review what came before it and choose one plan change.'
+      : 'A difficult week. Focus on safety, support and one practical change rather than self-punishment.'
   )
 
   async function shareAlly() {
@@ -112,10 +115,45 @@
   <div class="shell">
     <div class="core">
       <p class="body">
-        {t('Negative mood and craving intensity predict a slip hours before it happens. This page turns your honest logging into a map of your danger zones — not generic advice.')}
+        {t('This page summarizes what you logged. It shows associations in your own entries—not causes, predictions or a diagnosis.')}
       </p>
     </div>
   </div>
+
+  <div class="review-shell">
+    <div class="review-core">
+      <div class="review-head">
+        <div><span class="eyebrow on">{t('Next seven days')}</span><h2>{t('One pattern. One practical plan.')}</h2></div>
+        <span class="review-mark"><Icon name="compass" size={21} /></span>
+      </div>
+      <div class="review-list">
+        <div class="review-row"><span>01</span><div><small>{t('High-risk context')}</small><strong>{plan.contextText}</strong></div></div>
+        <div class="review-row"><span>02</span><div><small>{t('Most helpful coping signal')}</small><strong>{plan.strategyText}</strong>{#if plan.sampleWarning}<em>{plan.sampleWarning}</em>{/if}</div></div>
+        <div class="review-row"><span>03</span><div><small>{t('Environment change')}</small><strong>{plan.environment}</strong></div></div>
+        <div class="review-row featured"><span>04</span><div><small>{t('If–then plan')}</small><strong>“{plan.implementation}”</strong></div></div>
+        <div class="review-row"><span>05</span><div><small>{t('Realistic weekly goal')}</small><strong>{plan.realisticGoal}</strong></div></div>
+      </div>
+      <p class="review-note">{t('Generated from your own entries. Associations are tentative, especially with fewer than three sessions.')}</p>
+    </div>
+  </div>
+
+  {#if coping.ranked.length}
+    <div class="shell">
+      <div class="core">
+        <div class="card-title"><span class="dot"></span>{t('What seems to help')}</div>
+        {#each coping.ranked.slice(0, 3) as action, index (action.id)}
+          <div class="strategy-row">
+            <span class="strategy-rank">{index + 1}</span>
+            <div class="grow"><strong>{action.label}</strong><small>{t('Average change')} {action.avgDrop.toFixed(1)} · {action.samples} {action.samples === 1 ? t('session') : t('sessions')}</small></div>
+            <span class="strategy-meter"><i style="transform:scaleX({Math.max(0.06, Math.min(1, action.avgDrop / 5))})"></i></span>
+          </div>
+        {/each}
+        {#if coping.night}
+          <div class="callout vio" style="margin-top:12px;"><Icon name="moon" size={19} /><div><strong>{coping.night.label}</strong> {t('has the strongest nighttime signal in your completed sessions.')} ({coping.night.nightSamples}×)</div></div>
+        {/if}
+      </div>
+    </div>
+  {/if}
 
   <div class="stat-row">
     <div class="stat"><div class="num">{streakDays}</div><div class="cap">{t('Day streak')}</div></div>
@@ -167,8 +205,15 @@
         {#if trendDir === 'down' && trend.recentN >= 3}
           <div class="callout acc" style="margin-bottom:14px;">
             <Icon name="chart" size={20} />
-            <div><strong>{t('Rewiring signal.')}</strong> {tf('Average urge intensity is down from {prior} to {recent}/10. The desensitization is reversing.', { prior: trend.prior.toFixed(1), recent: trend.recent.toFixed(1) })}</div>
+            <div><strong>{t('Urges were lower this week.')}</strong> {tf('Your logged average moved from {prior} to {recent}/10. Consider what changed, while remembering that small samples can fluctuate.', { prior: trend.prior.toFixed(1), recent: trend.recent.toFixed(1) })}</div>
           </div>
+        {/if}
+
+        {#if report.topContexts.length}
+          <div class="label-block">{t('Most logged contexts')}</div>
+          {#each report.topContexts as item (item.context)}
+            <div class="list-item"><span>{t(item.context)}</span><span class="tag vio">{item.count}×</span></div>
+          {/each}
         {/if}
 
         {#if report.topMoods.length}
@@ -182,10 +227,10 @@
         {/if}
 
         <div class="divider"></div>
-        <div class="list-item">
+        {#if report.peakHour !== null}<div class="list-item">
           <span>{t('Peak time of day')}</span>
           <span class="tag vio">{t(report.hourFrac)} · ~{report.peakHour}:00</span>
-        </div>
+        </div>{/if}
         {#if report.avgUrge !== null}
           <div class="list-item">
             <span>{t('Average urge at slip')}</span>
@@ -209,7 +254,7 @@
           </div>
         {/if}
 
-        <div class="divider"></div>
+        {#if report.totalSlips > 0}<div class="divider"></div>
         <div class="callout vio">
           <Icon name="shield" size={20} />
           <div>
@@ -219,7 +264,7 @@
               action: report.topEscalation[0]?.id === 'tabjump' ? t('I close all tabs and leave the room') : t('I do a replacement activity for 10 minutes')
             })}
           </div>
-        </div>
+        </div>{/if}
       </div>
     </div>
   {:else}
@@ -238,9 +283,9 @@
     <div class="core">
       <div class="card-title"><span class="dot"></span>{t('Reading the trend')}</div>
       <p class="body" style="font-size:0.88rem;">
-        <strong>{t('Rising urge intensity over weeks')}</strong> {t('often means escalation mechanisms are creeping in (more time, more extreme, tab-jumping) — catch and name them.')}<br />
-        <strong>{t('Falling urge intensity')}</strong> {t('is the recovery signal: receptor sensitivity returning.')}<br />
-        <strong>{t('Poor sleep or skipped exercise')}</strong> {t('show up as higher average urge. They\'re levers, not punishments.')}
+        <strong>{t('Trends describe your entries; they do not explain the cause.')}</strong><br />
+        {t('Look for repeated contexts and compare several weeks before changing your plan. A few entries can create a misleading pattern.')}<br />
+        {t('If distress or impairment is significant, share the pattern with a qualified clinician instead of relying on the app alone.')}
       </p>
     </div>
   </div>
@@ -269,6 +314,14 @@
 </div>
 
 <style>
+  .review-shell { padding:6px; margin-bottom:14px; border-radius:32px; background:linear-gradient(145deg,rgba(94,234,212,.08),rgba(167,139,250,.045)); box-shadow:inset 0 0 0 1px rgba(94,234,212,.14),var(--ambient); }
+  .review-core { padding:22px; border-radius:26px; background:radial-gradient(28rem 20rem at 100% 0,rgba(94,234,212,.09),transparent 60%),rgba(8,11,18,.95); box-shadow:inset 0 0 0 1px var(--hairline); }
+  .review-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:18px; }.review-head h2{font-size:1.35rem;margin-top:9px}.review-mark{width:46px;height:46px;display:grid;place-items:center;flex-shrink:0;border-radius:15px;color:var(--acc);background:rgba(94,234,212,.08);box-shadow:inset 0 0 0 1px rgba(94,234,212,.16);animation:compass-drift 4s var(--spring) infinite alternate}
+  .review-list { display:flex; flex-direction:column; gap:7px; }
+  .review-row { display:grid; grid-template-columns:28px 1fr; gap:10px; padding:12px 13px; border-radius:17px; background:rgba(255,255,255,.025); box-shadow:inset 0 0 0 1px rgba(255,255,255,.045); transition:transform .45s var(--spring),background .45s var(--spring); }.review-row:hover{transform:translateX(3px);background:rgba(255,255,255,.04)}.review-row>span{color:var(--acc);font-size:.59rem;font-weight:800;letter-spacing:.1em;padding-top:3px}.review-row small,.review-row strong,.review-row em{display:block}.review-row small{color:var(--text-3);font-size:.6rem;font-weight:750;letter-spacing:.1em;text-transform:uppercase}.review-row strong{font-size:.78rem;line-height:1.5;margin-top:4px}.review-row em{color:var(--warn);font-size:.64rem;margin-top:4px;font-style:normal}.review-row.featured{background:linear-gradient(135deg,rgba(94,234,212,.075),rgba(94,234,212,.02));box-shadow:inset 0 0 0 1px rgba(94,234,212,.14)}
+  .review-note { color:var(--text-3); font-size:.64rem; line-height:1.5; margin:14px 4px 0; }
+  .strategy-row { display:grid; grid-template-columns:30px minmax(0,1fr) 62px; gap:10px; align-items:center; padding:11px 0; border-bottom:1px solid var(--hairline); }.strategy-row:last-of-type{border-bottom:0}.strategy-rank{width:28px;height:28px;display:grid;place-items:center;border-radius:10px;color:var(--acc);background:rgba(94,234,212,.07);font-size:.7rem;font-weight:800}.strategy-row strong,.strategy-row small{display:block}.strategy-row strong{font-size:.82rem}.strategy-row small{color:var(--text-3);font-size:.65rem;margin-top:3px}.strategy-meter{height:4px;overflow:hidden;border-radius:4px;background:rgba(255,255,255,.06)}.strategy-meter i{display:block;width:100%;height:100%;transform-origin:left;background:linear-gradient(90deg,var(--vio),var(--acc));transition:transform .9s var(--spring)}
+  @keyframes compass-drift { from{transform:rotate(-7deg)} to{transform:rotate(8deg)} }
   .label-block {
     font-size: 0.72rem;
     font-weight: 700;

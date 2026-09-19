@@ -48,11 +48,15 @@
     monitor: 'M3 5h18v11H3zM8 20h8M12 16v4',
     calendar: 'M8 3v4M16 3v4M4 9h16M5 9v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9',
     list: 'M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01',
-    copy: 'M9 9h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V10a1 1 0 0 1 1-1zM5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1'
+    copy: 'M9 9h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V10a1 1 0 0 1 1-1zM5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1',
+    eye: 'M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6S2.5 12 2.5 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
+    door: 'M5 21V3h12v18M9 21V6l8-3M13.5 12h.01M3 21h18',
+    compass: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM15.5 8.5l-2 5-5 2 2-5 5-2z',
+    map: 'M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3V6zM9 3v15M15 6v15'
   }
 
   let { name, size = 24, stroke = 1.7, color = 'currentColor' } = $props()
-  const d = PATHS[name] || ''
+  const d = $derived(PATHS[name] || '')
 </script>
 
 <svg

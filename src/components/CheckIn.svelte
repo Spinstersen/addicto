@@ -1,7 +1,7 @@
 <script>
   import { MOODS, ESCALATION, SELF_COMPASSION, DAILY_LEVERS } from '../lib/content.js'
   import { addCheckin, addSlip, setDaily } from '../lib/db.js'
-  import { load, data } from '../lib/store.svelte.js'
+  import { load, data, todayKey } from '../lib/store.svelte.js'
   import { vibrate } from '../lib/helpers.js'
   import { t } from '../lib/i18n.svelte.js'
   import Icon from '../lib/Icon.svelte'
@@ -13,6 +13,15 @@
   let mood = $state(null)
   let sleep = $state(false)
   let exercise = $state(false)
+  let context = $state(null)
+
+  const CONTEXTS = [
+    { id: 'alone', label: 'Alone' },
+    { id: 'bed', label: 'In bed' },
+    { id: 'bathroom', label: 'Bathroom' },
+    { id: 'work', label: 'Work / study' },
+    { id: 'scrolling', label: 'Scrolling' }
+  ]
 
   let showSlip = $state(false)
   let slipUrge = $state(8)
@@ -35,11 +44,11 @@
   }
 
   async function save() {
-    await addCheckin({ urge, mood })
+    await addCheckin({ urge, mood, context })
     if (showSlip) {
-      await addSlip({ urge: slipUrge, mood: slipMood, note: slipNote.trim(), escalation: [...slipEsc], sleepBad: slipSleepBad })
+      await addSlip({ urge: slipUrge, mood: slipMood, context, note: slipNote.trim(), escalation: [...slipEsc], sleepBad: slipSleepBad })
     }
-    const today = new Date().toISOString().slice(0, 10)
+    const today = todayKey()
     await setDaily(today, { sleep, exercise })
     await load()
     saved = true
@@ -51,6 +60,7 @@
       saved = false
       urge = 2
       mood = null
+      context = null
       sleep = false
       exercise = false
       showSlip = false
@@ -95,20 +105,32 @@
       {/each}
     </div>
     <p class="faint" style="font-size:0.8rem; margin-top:12px;">
-      {t('Bored, lonely, stressed — naming the state interrupts the automatic loop. Negative mood + craving intensity are the two strongest slip predictors.')}
+      {t('Track the feeling without assuming it caused the urge. Repeated entries can reveal your own pattern.')}
     </p>
   </div>
 </div>
 
 <div class="shell">
   <div class="core">
-    <div class="card-title"><span class="dot"></span>3 · {t('The two levers today')}</div>
+    <div class="card-title"><span class="dot"></span>3 · {t('Where are you?')}</div>
+    <div class="pill-grid">
+      {#each CONTEXTS as item (item.id)}
+        <button class="choice-pill" class:selected={context === item.id} onclick={() => (context = context === item.id ? null : item.id)}>{t(item.label)}</button>
+      {/each}
+    </div>
+    <p class="faint" style="font-size:0.8rem; margin-top:12px;">{t('Context often makes the most actionable pattern: time, place, device and being alone.')}</p>
+  </div>
+</div>
+
+<div class="shell">
+  <div class="core">
+    <div class="card-title"><span class="dot"></span>4 · {t('Basic care today')}</div>
     <div class="list-item">
       <div class="row">
         <span class="tipp-ic"><Icon name="moon" size={18} /></span>
         <div>
           <div class="l-label">{t('Slept 7+ hours')}</div>
-          <div class="l-sub">{t('sleep debt raises dopamine hunger')}</div>
+          <div class="l-sub">{t('sleep can affect attention and self-control')}</div>
         </div>
       </div>
       <label class="toggle"><input type="checkbox" checked={sleep} onchange={() => (sleep = !sleep)} /><span class="track"></span></label>
@@ -118,7 +140,7 @@
         <span class="tipp-ic"><Icon name="dumbbell" size={18} /></span>
         <div>
           <div class="l-label">{t('Moved 20+ minutes')}</div>
-          <div class="l-sub">{t('the legal dopamine hit')}</div>
+          <div class="l-sub">{t('movement can support mood and coping')}</div>
         </div>
       </div>
       <label class="toggle"><input type="checkbox" checked={exercise} onchange={() => (exercise = !exercise)} /><span class="track"></span></label>
@@ -141,7 +163,7 @@
 {:else}
   <div class="shell" style="border-color: rgba(251,113,133,0.25);">
     <div class="core">
-      <div class="card-title" style="color: var(--danger);"><span class="dot" style="background:var(--danger); box-shadow:0 0 10px rgba(251,113,133,0.4);"></span>{t('Log the slip — no shame, it\'s data')}</div>
+      <div class="card-title" style="color: var(--danger);"><span class="dot" style="background:var(--danger); box-shadow:0 0 10px rgba(251,113,133,0.4);"></span>{t('Review the slip without a shame spiral')}</div>
       <div class="slider-row">
         <span class="val">{slipUrge}</span>
         <input type="range" min="0" max="10" step="1" bind:value={slipUrge} style="--fill: {slipUrge * 10}%;" />
@@ -155,7 +177,7 @@
           </button>
         {/each}
       </div>
-      <div class="label">{t('Did escalation creep in?')} <span class="faint" style="text-transform:none;">{t('(the 5 documented mechanisms)')}</span></div>
+      <div class="label">{t('Did any of these patterns show up?')} <span class="faint" style="text-transform:none;">{t('(optional)')}</span></div>
       <div class="pill-grid" style="margin-bottom:14px;">
         {#each ESCALATION as e (e.id)}
           <button class="choice-pill" class:selected={slipEsc.includes(e.id)} onclick={() => toggleEsc(e.id)}>{t(e.label)}</button>
@@ -164,7 +186,7 @@
       <div class="list-item" style="padding-top:0;">
         <div>
           <div class="l-label">{t('Poor sleep before this?')}</div>
-          <div class="l-sub">{t('a documented amplifier of the inhibition gap')}</div>
+          <div class="l-sub">{t('worth tracking as part of your pattern')}</div>
         </div>
         <label class="toggle"><input type="checkbox" checked={slipSleepBad} onchange={() => (slipSleepBad = !slipSleepBad)} /><span class="track"></span></label>
       </div>

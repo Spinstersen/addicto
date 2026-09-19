@@ -17,21 +17,25 @@
 
   let tab = $state('home')
   let showPanic = $state(false)
+  let panicMode = $state('guided')
   let ready = $state(false)
   let locked = $state(false)
   let firedDay = null
   let notifyTimer = null
 
+  const validTabs = new Set(['home', 'checkin', 'practices', 'program', 'report', 'activities', 'cba', 'settings'])
+
   onMount(() => {
     load().then(() => {
       ready = true
       locked = settings.stealth
+      document.title = 'Calculator'
       if (locked) return
       const params = new URLSearchParams(window.location.search)
       if (params.get('panic') === '1') {
         showPanic = true
       } else if (params.get('tab')) {
-        tab = params.get('tab')
+        tab = validTabs.has(params.get('tab')) ? params.get('tab') : 'home'
       }
       const checkedToday = data.checkins.some(
         (c) => new Date(c.ts).toDateString() === new Date().toDateString()
@@ -59,8 +63,8 @@
     if (now.getHours() === h && now.getMinutes() === m && firedDay !== todayKey) {
       firedDay = todayKey
       try {
-        new Notification('Addicto', {
-          body: 'Ten-second check-in? Naming the urge halves its power.',
+        new Notification('Reminder', {
+          body: 'Your private check-in is ready.',
           tag: 'addicto-daily'
         })
       } catch {
@@ -78,8 +82,13 @@
   ]
 
   function go(id) {
-    tab = id
+    tab = validTabs.has(id) ? id : 'home'
     window.scrollTo({ top: 0 })
+  }
+
+  function openPanic(mode = 'guided') {
+    panicMode = mode
+    showPanic = true
   }
 </script>
 
@@ -94,13 +103,13 @@
 {:else}
   <main>
     {#if tab === 'home'}
-      <div class="screen"><Home onpanic={() => (showPanic = true)} go={go} /></div>
+      <div class="screen"><Home onpanic={() => openPanic('guided')} onquick={() => openPanic('quick')} go={go} /></div>
     {:else if tab === 'checkin'}
-      <div class="screen"><CheckIn go={go} onpanic={() => (showPanic = true)} /></div>
+      <div class="screen"><CheckIn go={go} onpanic={() => openPanic('quick')} /></div>
     {:else if tab === 'practices'}
       <div class="screen"><Practices go={go} /></div>
     {:else if tab === 'program'}
-      <div class="screen"><Program go={go} onpanic={() => (showPanic = true)} /></div>
+      <div class="screen"><Program go={go} onpanic={() => openPanic('guided')} /></div>
     {:else if tab === 'report'}
       <div class="screen"><Report go={go} /></div>
     {:else if tab === 'activities'}
@@ -125,6 +134,7 @@
 
   {#if showPanic}
     <PanicFlow
+      mode={panicMode}
       onclose={() => (showPanic = false)}
       ongoing={(id) => {
         showPanic = false

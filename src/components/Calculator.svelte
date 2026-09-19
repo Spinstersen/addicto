@@ -1,6 +1,5 @@
 <script>
   import { vibrate } from '../lib/helpers.js'
-  import Icon from '../lib/Icon.svelte'
 
   let { onunlock } = $props()
 
@@ -138,6 +137,24 @@
     fresh = true
   }
 
+  function handleKey(event) {
+    if (/^[0-9]$/.test(event.key)) {
+      digit(event.key)
+      return
+    }
+    if (event.key === '.') dot()
+    else if (event.key === '+') setOp('+')
+    else if (event.key === '-') setOp('−')
+    else if (event.key === '*') setOp('×')
+    else if (event.key === '/') setOp('÷')
+    else if (event.key === 'Enter' || event.key === '=') equals()
+    else if (event.key === 'Backspace') backspace()
+    else if (event.key === 'Escape' || event.key.toLowerCase() === 'c') clearAll()
+    else if (event.key === '%') percent()
+    else return
+    event.preventDefault()
+  }
+
   const keys = [
     { label: 'C', cls: 'fn', fn: clearAll },
     { label: '⌫', cls: 'fn', fn: backspace },
@@ -162,13 +179,19 @@
   ]
 </script>
 
+<svelte:window onkeydown={handleKey} />
+
 <div class="calc">
   <div class="calc-head">
-    <span class="calc-brand"></span>
-    <span class="calc-hint"><Icon name="lock" size={14} /></span>
+    <div>
+      <span class="calc-title">Calculator</span>
+      <span class="calc-subtitle">Standard</span>
+    </div>
+    <span class="calc-status" aria-hidden="true"><i></i><i></i><i></i></span>
   </div>
 
-  <div class="calc-screen">
+  <div class="calc-screen" aria-live="polite" aria-atomic="true">
+    <div class="screen-glint"></div>
     <div class="calc-expr">{expr}</div>
     <div class="calc-display" class:error={error}>{display}</div>
   </div>
@@ -182,6 +205,7 @@
         class:fn={k.cls === 'fn'}
         onclick={k.fn}
         aria-label={k.label}
+        title={k.label === 'C' ? 'Clear' : k.label === '⌫' ? 'Backspace' : k.label}
       >
         {k.label}
       </button>
@@ -191,90 +215,116 @@
 
 <style>
   .calc {
-    max-width: 420px;
+    max-width: 440px;
     width: 100%;
     align-self: center;
     min-height: 100vh;
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
-    padding: calc(18px + var(--safe-top)) 18px calc(18px + var(--safe-bottom));
-    background: var(--bg-deep);
+    padding: calc(22px + var(--safe-top)) 20px calc(22px + var(--safe-bottom));
+    background:
+      radial-gradient(32rem 22rem at 100% -8%, rgba(73, 102, 146, .18), transparent 62%),
+      linear-gradient(180deg, #080d17, #050912);
   }
   .calc-head {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    height: 28px;
+    justify-content: space-between;
+    min-height: 44px;
+    padding: 0 4px;
+    margin-bottom: 14px;
   }
-  .calc-hint {
-    display: flex;
-    align-items: center;
-    color: var(--text-4);
-  }
-  .calc-hint :global(svg) { stroke: var(--text-4); }
+  .calc-title, .calc-subtitle { display:block; }
+  .calc-title { color:#dce5f3; font-size:.96rem; font-weight:750; letter-spacing:-.01em; }
+  .calc-subtitle { color:#4e5d74; font-size:.58rem; font-weight:750; letter-spacing:.18em; text-transform:uppercase; margin-top:2px; }
+  .calc-status { display:flex; align-items:center; gap:4px; padding:10px 12px; border-radius:999px; background:rgba(255,255,255,.025); box-shadow:inset 0 0 0 1px rgba(255,255,255,.045); }
+  .calc-status i { width:3px; height:3px; border-radius:50%; background:#5e6d84; }
+  .calc-status i:nth-child(2) { opacity:.68; }
+  .calc-status i:nth-child(3) { opacity:.38; }
   .calc-screen {
-    margin-top: 6px;
-    padding: 26px 22px;
-    border-radius: 24px;
-    background: linear-gradient(180deg, #0a1220, #0d1626);
-    border: 1px solid var(--hairline);
-    box-shadow: inset 0 2px 14px rgba(0, 0, 0, 0.5);
+    position:relative;
+    overflow:hidden;
+    min-height:168px;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    padding: 28px 24px 24px;
+    border-radius: 29px;
+    background:
+      radial-gradient(20rem 10rem at 95% 0, rgba(94, 234, 212, .055), transparent 58%),
+      linear-gradient(165deg, #101a29, #0a111e);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.07),
+      inset 0 -18px 45px rgba(0,0,0,.18),
+      0 24px 55px -34px rgba(0,0,0,.9),
+      0 0 0 5px rgba(255,255,255,.018),
+      0 0 0 6px rgba(255,255,255,.035);
     text-align: right;
     direction: ltr;
   }
+  .screen-glint { position:absolute; width:220px; height:90px; right:-55px; top:-56px; border-radius:50%; background:rgba(255,255,255,.055); transform:rotate(-14deg); filter:blur(2px); pointer-events:none; }
   .calc-expr {
-    font-size: 0.95rem;
-    color: var(--text-4);
+    font-size: 0.88rem;
+    color: #526077;
     min-height: 1.4rem;
     word-break: break-all;
+    font-variant-numeric: tabular-nums;
   }
   .calc-display {
-    font-size: 3rem;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.02em;
+    font-size: clamp(2.7rem, 15vw, 4.25rem);
+    font-weight: 620;
+    color: #f3f7fc;
+    letter-spacing: -0.055em;
     font-variant-numeric: tabular-nums;
-    line-height: 1.1;
+    line-height: 1.04;
     word-break: break-all;
+    text-shadow:0 3px 20px rgba(125,211,252,.08);
   }
   .calc-display.error { color: var(--danger); }
   .calc-keys {
     flex: 1;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
+    gap: clamp(9px, 3vw, 13px);
     align-content: end;
-    margin-top: 18px;
+    margin-top: 26px;
   }
   .calc-key {
-    height: 68px;
-    border-radius: 22px;
-    background: linear-gradient(180deg, #232f47, #1c2740);
-    border: 1px solid var(--hairline);
-    box-shadow: var(--hairline-shadow), 0 6px 0 #131c30;
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--text);
+    height: clamp(58px, 9.4vh, 76px);
+    border-radius: 24px;
+    background: linear-gradient(155deg, #1d293b, #131d2d);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.085),
+      inset 0 -1px 0 rgba(0,0,0,.28),
+      0 7px 0 #0a111c,
+      0 16px 30px -22px rgba(0,0,0,.9);
+    font-size: 1.42rem;
+    font-weight: 620;
+    color: #dbe5f4;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.1s var(--spring), filter 0.15s;
+    transform:translateY(0);
+    transition:transform .28s cubic-bezier(.32,.72,0,1), filter .28s cubic-bezier(.32,.72,0,1), box-shadow .28s cubic-bezier(.32,.72,0,1);
   }
   .calc-key:active {
-    transform: translateY(4px);
-    box-shadow: var(--hairline-shadow), 0 2px 0 #131c30;
+    transform: translateY(5px) scale(.985);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 2px 0 #0a111c;
   }
-  .calc-key.fn { color: var(--acc); font-size: 1.25rem; }
+  .calc-key.fn { color:#9fb0c7; font-size:1.18rem; background:linear-gradient(155deg,#273348,#1b2639); }
   .calc-key.op {
-    background: linear-gradient(180deg, #2b3d5c, #22314b);
-    color: var(--acc);
+    background: linear-gradient(155deg, #22465a, #173347);
+    color: #8debdc;
     font-size: 1.7rem;
   }
   .calc-key.eq {
-    background: linear-gradient(180deg, #34d399, #22b380);
-    color: #04251f;
+    background: linear-gradient(155deg, #57dfc0, #2eae91);
+    color: #062b27;
     font-size: 1.8rem;
-    box-shadow: 0 6px 0 #0d5e44, 0 8px 26px -8px var(--acc-glow);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.32), 0 7px 0 #11604f, 0 18px 34px -20px rgba(52,211,153,.8);
   }
+  @media (hover:hover) { .calc-key:hover { filter:brightness(1.12); transform:translateY(-2px); } .calc-key:active { transform:translateY(5px) scale(.985); } }
+  @media (max-height:690px) { .calc { padding-top:calc(12px + var(--safe-top)); padding-bottom:calc(12px + var(--safe-bottom)); } .calc-head { margin-bottom:8px; } .calc-screen { min-height:125px; padding-top:20px; padding-bottom:18px; } .calc-keys { margin-top:18px; } .calc-key { height:55px; border-radius:19px; } }
+  @media (prefers-reduced-motion:reduce) { .calc-key { transition-duration:.01ms; } }
 </style>

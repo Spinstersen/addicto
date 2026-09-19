@@ -47,6 +47,7 @@
   async function toggleStealth() {
     settings.stealth = !settings.stealth
     await setSetting('stealth', settings.stealth)
+    document.title = 'Calculator'
     vibrate(30)
   }
 
@@ -207,7 +208,7 @@
       <div class="list-item">
         <div>
           <div class="l-label">{t('Disguise as calculator')}</div>
-          <div class="l-sub">{t('The app looks and is named like a calculator. Type 0 ÷ 0 = to open it.')}</div>
+          <div class="l-sub">{t('The installed app stays disguised as Calculator. When this lock is on, type 0 ÷ 0 = to unlock it.')}</div>
         </div>
         <label class="toggle"><input type="checkbox" checked={settings.stealth} onchange={toggleStealth} /><span class="track"></span></label>
       </div>
@@ -411,7 +412,7 @@
     <div class="core">
       <div class="card-title"><span class="dot"></span>{t('About')}</div>
       <p class="body" style="font-size:0.85rem;">
-        {t('Addicto is a local, private, open-source recovery companion. Methods: CBT, motivational interviewing, mindfulness, SMART Recovery 4-Point, DBT distress tolerance (TIPP), and the ADHD dopamine-dysregulation research (sleep, exercise, environmental design as the primary levers). It is a support tool, not medical treatment — if you\'re in crisis or your use causes serious distress, talk to a licensed therapist.')}
+        {t('Addicto is a local, private, open-source self-help companion. It adapts ideas from CBT, motivational interviewing, mindfulness, relapse prevention and distress-tolerance skills. This specific app has not been clinically validated and does not diagnose or cure a condition. If the behavior causes significant impairment, talk with a licensed clinician experienced in compulsive sexual behavior.')}
       </p>
     </div>
   </div>

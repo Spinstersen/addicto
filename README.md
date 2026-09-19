@@ -1,103 +1,81 @@
 # Addicto
 
-A **local, private, free** PWA for quitting porn — engineered for ADHD brains, built on the methods with real evidence behind them.
+Addicto is a private, offline-first self-help companion for adults who want to change pornography use that feels difficult to control or is causing real-life harm.
 
-**No cloud. No account. No server. Your data never leaves your device.**
+It is not a diagnostic tool, medical treatment, or a promised cure. High-frequency sexual behavior alone is not a disorder, and distress caused only by moral disapproval is not enough for an ICD-11 diagnosis of compulsive sexual behaviour disorder (CSBD).
 
-## The research this is built on
+## Product principles
 
-The science isn't about willpower. It's about a dopamine system and the environment around it:
+- **Control and impact over labels.** The onboarding fit check asks about impaired control, persistence, and real-life impact before using a recovery frame.
+- **Choice over shame.** A setback becomes a short review and a plan adjustment, not proof that all progress was lost.
+- **Measure the intervention, not a fake curve.** The urge flow records intensity before and after a coping action. It never pretends every urge falls on the same timer.
+- **Actions over “dopamine reset” claims.** The app uses plain behavioral language and avoids unsupported receptor, withdrawal, and brain-rewiring timelines.
+- **Patterns over predictions.** Reports summarize the user's own entries and clearly label them as associations, not causes or diagnoses.
+- **Privacy by default.** Data stays in IndexedDB on the device. There is no account, analytics service, or backend.
 
-- **ADHD is a dopamine-calibration problem, not a character flaw.** Blunted phasic reward response, depressed baseline motivation, and impaired inhibitory control make high-novelty, instantly-available stimuli (like porn) disproportionately compelling. Willpower runs on the exact prefrontal system ADHD compromises — so this app demands as little willpower as possible.
-- **Shame is mechanically counterproductive.** Shame activates the amygdala, which suppresses the prefrontal cortex — the system you need to stop. So the app is anti-shame by design: soft-fail streaks, self-compassion after slips, mechanism-not-morality copy.
-- **The only randomized-trial-tested program** (Hands-Off: CBT + motivational interviewing + mindfulness, 6 weeks) works — but **89% of people dropped out**. Engagement is the real problem. Everything here is sized for a 10-second interaction.
-- **The documented levers** (Frontiers in Psychiatry 2025; ADHD research): treat the dopamine architecture via **exercise**, **sleep**, **environmental design** (reduce friction, not resistance), and **emotional-regulation skills**. The app tracks and reinforces the first two and automates the third.
-- **Escalation is a desensitization process** with five documented mechanisms (volume, genre escalation, tab-jumping, edging, binging). Slip logging flags them so you can interrupt the pattern.
-- **Urge + mood logging** is the single most useful feature: negative mood and craving intensity predict a slip hours before it happens.
-- **Urges are waves** — they peak and fall in 10–20 minutes. The panic flow teaches urge surfing, not resistance.
+## Evidence boundaries
 
-## Features
+The evidence for treatment of problematic pornography use is promising but still limited. A 2024 systematic review found only four randomized clinical trials among the included treatment studies. CBT and ACT-based approaches are promising, but study quality, sample sizes, follow-up, and treatment protocols vary.
 
-| Feature | What it does | Evidence base |
-|---|---|---|
-| 🌊 **Panic flow** | Live urge-surfing wave + DBT **TIPP** skills + SMART **DENTS** playbook + your crisis plan + your CBA costs + (optional) a **spiritual anchor** (dua + verse) — all in the craving moment | Urge surfing (Marlatt); DBT distress tolerance; SMART Recovery |
-| 📋 **10-sec check-in** | Urge slider + HALT+ mood tags + **sleep/exercise levers** | Negative mood + craving predict slips; sleep & exercise are the ADHD dopamine levers |
-| 📅 **Daily Practices** | Your routine as a checklist: **Faith template** (Salat al-Hajah, 5 verses with meaning, recitation, gratitude, dua, CBA review), **Secular template**, or fully custom. Progress ring + streak + gratitude list | Behavioral activation; daily-ritual adherence research |
-| 🧮 **CBA worksheet** | Interactive SMART Cost-Benefit Analysis (4 quadrants), saved and surfaced **in the panic moment** | SMART Recovery cost-benefit analysis |
-| 🕌 **Faith mode** *(off by default)* | Duas for strength, Quran verses on temptation/sabr/patience — shown as a spiritual anchor in the panic flow | Spirituality as a documented coping resource |
-| 📊 **Pattern report** | Trigger map: top moods, peak time, avg urge, escalation pattern, sleep correlation, if-then plan + **weekly digest** + **milestones gallery** + native share | Self-monitoring studies; Addictive Behaviors 2024 |
-| 📚 **6-week program** | CBT / MI / mindfulness / ACT, ~10 min/week | Hands-Off RCT; SMART Recovery 4-Point |
-| 🎯 **Replacement activities** | Substitutes grouped by function with built-in timers | Behavioral activation |
-| 🌱 **Soft-fail streak** | Milestones + check-in streak, progress preserved after slips | Rigid-abstinence framing backfires |
-| 📱 **Android-first blocking** | Step-by-step device guide: **Private DNS** (no app), AdGuard, SafeSearch, Screen Time (iPhone), hosts (Windows) + copyable blocklist | Environmental design: reduce access friction |
-| ⚡ **Phone shortcuts** | Long-press app icon → "Ride an urge" / "Quick check-in" / "Daily practices"; install banner + iOS instructions | Relapse happens on the phone — make help one tap away |
-| 🤝 **Ally export** | One-tap weekly summary via native share sheet or clipboard | Accountability/support predicts retention |
+The closest tested digital model is **Hands-Off**, a six-module web intervention drawing on motivational interviewing, CBT, mindfulness, and social-psychological techniques. Its preliminary randomized trial reported reductions in problematic use and frequency, alongside a major adherence problem. That supports using a short structured program; it does **not** validate Addicto or any individual feature in this repository.
+
+A 2022 review of mobile apps marketed for pornography problems found that none of the reviewed apps cited direct evidence for the app's efficacy or safety. Addicto therefore does not claim that popular product conventions—streaks, blockers, accountability, timers, or “reboot” language—are proven treatments.
+
+Key sources:
+
+- [WHO ICD-11 Clinical Descriptions and Diagnostic Requirements](https://www.who.int/publications/i/item/9789240077263)
+- [Hands-Off randomized feasibility trial](https://pubmed.ncbi.nlm.nih.gov/34727088/)
+- [Treatment Approaches for Problematic Pornography Use: A Systematic Review](https://pubmed.ncbi.nlm.nih.gov/37880509/)
+- [Validation of a Brief Pornography Screen](https://pmc.ncbi.nlm.nih.gov/articles/PMC8939429/)
+- [mHealth Technologies for Managing Problematic Pornography Use: Content Analysis](https://pubmed.ncbi.nlm.nih.gov/36227634/)
+
+## What the app does
+
+- **Careful onboarding:** choose an abstinence or control-focused goal; review impaired control, life impact, persistence, and moral-only distress; build a short coping plan.
+- **Quick check-ins:** log urge intensity, feeling, context, sleep, and movement. Context is included in pattern reports.
+- **Urge support:** rate the urge, choose one grounding, movement, breathing, delay, environment, or replacement action, then rate it again. The session stores the action and actual outcome.
+- **One-tap emergency mode:** paced breathing and a one-minute delay begin immediately, alongside a leave-the-room prompt, the user's strongest prior coping signal, and an optional trusted contact.
+- **Seven guided actions:** interactive five-senses grounding, muscle release, mindful observation, leave-the-room countdown, values card, location change, and delayed-choice timer. Each has purpose-built motion, touch feedback, and reduced-motion support.
+- **Personal coping signals:** completed before/after sessions are grouped by the actions they included and ranked by average change, with sample counts and early-signal warnings.
+- **Actionable weekly review:** turns logged context and coping sessions into one environment change, one if–then plan, and one achievable seven-day goal.
+- **Six-week skills course:** short exercises based on motivational work, trigger analysis, environmental design, implementation intentions, behavioral activation, cognitive defusion, and relapse prevention.
+- **Personal plan:** values, a one-line reason, likely situations, replacement actions, and an optional support person appear when they are useful.
+- **Pattern report:** configurable 7/30/90-day summaries of logged context, feeling, time, urge, setbacks, and completed coping sessions.
+- **Optional blocking guidance:** per-device instructions and a customizable domain list. Addicto cannot enforce a system-wide block from inside a PWA.
+- **Backup and export:** local JSON backup and CSV export.
+- **Calculator privacy shell:** the installed PWA is named and iconed as Calculator. With the lock enabled it opens to a working calculator and unlocks with `0 ÷ 0 =`.
+
+## When self-help is not enough
+
+The app recommends professional assessment when impaired control, persistence, and significant life impact occur together. A qualified clinician should also assess depression, anxiety, trauma, OCD-related symptoms, mania, substance use, medication effects, relationship conflict, and other conditions that can change the treatment plan.
+
+If there is an immediate risk of harm to the user or another person, the urge flow directs the user to local emergency or crisis services instead of presenting the app as crisis care.
 
 ## Stack
 
-- **Svelte 5** + Vite
-- **Plus Jakarta Sans** (bundled, offline)
-- **Dexie** (IndexedDB) — all data on-device
-- **vite-plugin-pwa** — installable, offline-capable PWA
-- Custom stroke-icon set, hand-authored (no icon library)
-- **Built-in i18n** — 7 languages: **English, العربية (Arabic, RTL), Português, Español, Deutsch, Français, Italiano**. Auto-detected from your browser; switchable in Settings → Language. Every string, the 6-week program, and the faith module are fully translated.
+- Svelte 5 + Vite
+- Dexie / IndexedDB
+- `vite-plugin-pwa`
+- Plus Jakarta Sans, bundled locally
+- Seven UI languages with English fallback for newly revised clinical copy
 
-## Run it
+## Run locally
 
 ```bash
 npm install
-npm run dev       # local dev at http://localhost:5173
-npm run build     # production build in dist/
-npm run preview   # preview the production build
+npm run dev
+npm run build
+npm run preview
 ```
 
-## Put it on your phone
+The local development server defaults to `http://localhost:5173/`.
 
-1. Deploy the `dist/` folder to any static host (GitHub Pages, Netlify, your own domain).
-2. Open the URL on your phone.
-3. Android: browser menu → **Install app** (or use the in-app install card). iPhone: **Share → Add to Home Screen**.
-4. Works offline. Data stays in the phone's browser storage only.
-5. Long-press the installed icon for shortcuts: **Ride an urge**, **Quick check-in**, **Daily practices**.
+## Privacy and backup compatibility
 
-## Deploy to GitHub Pages (free, auto)
+The IndexedDB database and backup identifier are `addicto`. Existing local data and backups continue to work without a migration or cloud transfer.
 
-The repo includes a ready-made workflow (`.github/workflows/deploy.yml`). It builds the app and publishes it whenever you push.
+Coping rankings are descriptive, not causal. When one session includes several actions, its before/after change contributes to each included action. The interface displays sample sizes and labels results based on only one or two sessions as early signals.
 
-1. Push this project to a GitHub repository (e.g. `github.com/yourname/addicto`). The workflow already sets the correct sub-path (`/addicto/`), so assets, icons and the PWA shortcuts all work — no config needed.
-2. On GitHub: **Settings → Pages → Source: "GitHub Actions"** (in newer UIs: *Build and deployment → Source → GitHub Actions*). GitHub Pages must be enabled for the Action to deploy.
-3. Push a change (or run the **Deploy to GitHub Pages** workflow manually from the Actions tab).
-4. After the run finishes (a minute or two), your app is live at:
+## License
 
-   `https://yourname.github.io/addicto/`
-
-5. Open it on your phone → install to home screen → works offline, shortcuts included.
-
-### Notes
-
-- **Custom domain / root deploy:** set `BASE_PATH=/` (in the workflow's `Build` step env, or via `process.env.BASE_PATH`) — e.g. if you deploy to `yourname.github.io` directly or a custom domain.
-- **Private repository:** GitHub Pages also works on private repos with the free tier.
-- **Updates:** every `git push` to `main` rebuilds and redeploys automatically.
-
-## Privacy
-
-Everything (check-ins, slips, daily levers, practices, CBA, settings, program progress) is stored in your browser's IndexedDB on your own device. There is no backend, no analytics, no tracking, no accounts. Use **Settings → Backup** to move your data to a new device, or **Export CSV** for spreadsheets.
-
-### Stealth mode (Settings → Stealth mode)
-
-Disguise the app as a calculator. The installed icon, name and page title all say **Calculator**, and it opens as a fully working calculator. To unlock the real app, type **`0 ÷ 0 =`** on the calculator. It re-locks whenever the app is reopened. The "Lock now" button in Settings hides it again instantly.
-
-## Blocking sites (per-device, in the app)
-
-The app's Settings → **Block porn on your device** has a step-by-step wizard per platform:
-
-- **Android (recommended):** Settings → Network & internet → Private DNS → `dns.adguard-dns.com` — system-wide adult-content filtering with no app and no battery cost. Optional: AdGuard app with the copyable blocklist, SafeSearch, app timers.
-- **iPhone:** Screen Time → Content & Privacy Restrictions → Limit Adult Websites + a never-allow list (add the copyable blocklist) — with your ally holding the passcode.
-- **Windows/Mac:** hosts-file blocklist (generated in-app) + DNS-level filtering.
-
-## Open source
-
-MIT licensed. Contribute anything: content, methods, translations, bug fixes. Recovery is different for everyone — the tool should be too.
-
-## Disclaimer
-
-This is a **support tool, not medical treatment**. It implements general CBT/MI/mindfulness/DBT principles shown to help in research trials. If your use is causing serious distress or you need professional help, talk to a licensed therapist.
+MIT. Clinical claims, translations, crisis copy, and blocking instructions should receive domain-expert review before a public health deployment.

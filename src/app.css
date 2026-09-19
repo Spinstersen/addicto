@@ -124,6 +124,14 @@ button {
   touch-action: manipulation;
 }
 
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: 3px solid rgba(94, 234, 212, 0.72);
+  outline-offset: 3px;
+}
+
 input,
 textarea {
   font-family: inherit;
@@ -835,11 +843,21 @@ textarea.field {
   gap: 3px;
   padding: 8px 2px 7px;
   border-radius: var(--r-pill);
-  font-size: 0.6rem;
+  font-size: 0.67rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   color: var(--text-4);
   transition: color 0.25s var(--ease-soft), transform 0.3s var(--spring);
+}
+
+@media (hover: hover) {
+  .nav-btn:hover { color: var(--text-2); transform: translateY(-2px); }
+  .btn:hover .arrow { transform: translateX(2px); }
+}
+
+@media (max-width: 380px) {
+  .nav-btn { font-size: 0.6rem; }
+  .nav-island-inner { width: calc(100% - 18px); }
 }
 
 .nav-btn .n-ic {

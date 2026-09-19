@@ -21,7 +21,9 @@ export const settings = $state({
   crisis: { topTriggers: [], topAlternatives: [], contact: '' },
   faithMode: false,
   stealth: false,
-  lang: 'en'
+  lang: 'en',
+  goalMode: 'stop',
+  fitCheck: { control: false, impact: false, duration: false, moralOnly: false }
 })
 
 export const data = $state({
@@ -55,7 +57,9 @@ export async function load() {
       crisis: await getSetting('crisis', { topTriggers: [], topAlternatives: [], contact: '' }),
       faithMode: await getSetting('faithMode', false),
       stealth: await getSetting('stealth', false),
-      lang: await getSetting('lang', null)
+      lang: await getSetting('lang', null),
+      goalMode: await getSetting('goalMode', 'stop'),
+      fitCheck: await getSetting('fitCheck', { control: false, impact: false, duration: false, moralOnly: false })
     }
   ])
   data.checkins = checkins
@@ -77,14 +81,25 @@ export async function load() {
   settings.faithMode = stored.faithMode
   settings.stealth = stored.stealth
   settings.lang = stored.lang || detectLang()
+  settings.goalMode = stored.goalMode
+  settings.fitCheck = stored.fitCheck
   applyDir(settings.lang)
   if (!settings.startDate) {
     settings.startDate = Date.now()
+    await setSetting('startDate', settings.startDate)
   }
   data.loaded = true
 }
 
-export const todayKey = () => new Date().toISOString().slice(0, 10)
+export const dayKey = (value = new Date()) => {
+  const d = value instanceof Date ? value : new Date(value)
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+export const todayKey = () => dayKey()
 
 export function dailyToday() {
   return data.daily.find((d) => d.day === todayKey()) || {}
@@ -177,7 +192,7 @@ export function isRelapseRecent() {
 }
 
 // check-in engagement streak — rewards showing up, not just staying clean.
-// Momentum built on daily logging is what the RCT dropout data says matters most.
+// Reward showing up and learning from the pattern, not only abstinence.
 export function checkinStreak() {
   const days = new Set(data.checkins.map((c) => new Date(c.ts).toDateString()))
   let streak = 0
@@ -207,8 +222,7 @@ export function milestone() {
   return { current, next }
 }
 
-// Urge trend — average check-in urge in recent weeks vs earlier weeks.
-// Declining average urge = desensitization reversing (the recovery signal).
+// Urge trend — a descriptive comparison, not a biological measure.
 export function urgeTrend() {
   const recent = data.checkins.filter((c) => c.ts > Date.now() - 7 * DAY && c.urge != null)
   const prior = data.checkins.filter((c) => {
@@ -219,17 +233,17 @@ export function urgeTrend() {
   return { recent: avg(recent), prior: avg(prior), recentN: recent.length, priorN: prior.length }
 }
 
-export function patternReport() {
-  if (data.slips.length === 0) return null
+export function patternReport(slips = data.slips, checkins = data.checkins) {
+  if (slips.length === 0 && checkins.length === 0) return null
   const moodCounts = {}
-  for (const s of data.slips) {
+  for (const s of slips) {
     if (s.mood) moodCounts[s.mood] = (moodCounts[s.mood] || 0) + 1
   }
   const hours = Array.from({ length: 24 }, () => 0)
-  for (const s of data.slips) {
+  for (const s of slips) {
     hours[new Date(s.ts).getHours()]++
   }
-  const peakHour = hours.indexOf(Math.max(...hours))
+  const peakHour = slips.length ? hours.indexOf(Math.max(...hours)) : null
   const hourFrac = peakHour >= 20 || peakHour < 4 ? 'night' : peakHour < 12 ? 'morning' : 'afternoon'
 
   const topMoods = Object.entries(moodCounts)
@@ -237,13 +251,13 @@ export function patternReport() {
     .slice(0, 3)
     .map(([m, n]) => ({ mood: m, count: n }))
 
-  const withUrge = data.slips.filter((s) => s.urge != null)
+  const withUrge = slips.filter((s) => s.urge != null)
   const avgUrge = withUrge.length > 0
     ? Math.round((withUrge.reduce((a, s) => a + s.urge, 0) / withUrge.length) * 10) / 10
     : null
 
   const escalationCounts = {}
-  for (const s of data.slips) {
+  for (const s of slips) {
     for (const e of s.escalation || []) escalationCounts[e] = (escalationCounts[e] || 0) + 1
   }
   const topEscalation = Object.entries(escalationCounts)
@@ -251,16 +265,25 @@ export function patternReport() {
     .slice(0, 3)
     .map(([e, n]) => ({ id: e, count: n }))
 
-  const sleepBadCount = data.slips.filter((s) => s.sleepBad).length
+  const sleepBadCount = slips.filter((s) => s.sleepBad).length
+  const contextCounts = {}
+  for (const item of checkins) {
+    if (item.context) contextCounts[item.context] = (contextCounts[item.context] || 0) + 1
+  }
+  const topContexts = Object.entries(contextCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([context, count]) => ({ context, count }))
 
   return {
     topMoods,
     peakHour,
     hourFrac,
     avgUrge,
-    totalSlips: data.slips.length,
+    totalSlips: slips.length,
     topEscalation,
-    sleepBadCount
+    sleepBadCount,
+    topContexts
   }
 }
 

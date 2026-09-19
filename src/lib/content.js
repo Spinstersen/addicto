@@ -1,7 +1,6 @@
-// Evidence map: methods here are drawn from the RCT-tested Hands-Off program,
-// SMART Recovery's 4-Point Program (REBT/CBT), DBT distress tolerance (TIPP),
-// and the ADHD dopamine-dysregulation literature. Each feature cites its basis
-// in the inline comments.
+// Evidence map: the course adapts components commonly used in CBT, motivational
+// interviewing, mindfulness and relapse prevention. Hands-Off provides preliminary
+// support for a structured web intervention, but that does not validate this app.
 
 export const MOODS = [
   { id: 'bored', label: 'Bored', icon: 'hourglass' },
@@ -18,9 +17,7 @@ export const MOODS = [
 
 export const MOOD_LABEL = Object.fromEntries(MOODS.map((m) => [m.id, m.label]))
 
-// Escalation mechanisms documented in Addictive Behaviors (2024): volume,
-// genre escalation, tab-jumping, edging, binging. ADHD novelty-seeking makes
-// genre escalation + tab-jumping the most likely. Logging them reveals the pattern.
+// Optional pattern labels. They are descriptive prompts, not diagnostic symptoms.
 export const ESCALATION = [
   { id: 'volume', label: 'More time', hint: 'Longer sessions than before' },
   { id: 'genre', label: 'More extreme', hint: 'Content escalating in intensity' },
@@ -36,16 +33,16 @@ export const TIPP = [
     id: 'temp',
     icon: 'snow',
     title: 'Temperature',
-    sub: 'Cold resets the system',
-    action: 'Hold ice or run cold water on your face / wrists for 30–60s. Or splash cold water repeatedly. This drops your arousal level fast — the single fastest physical reset.',
+    sub: 'Use temperature to ground yourself',
+    action: 'Try cool water on your face or hold something cool for 30–60 seconds. Stop if you feel faint, unwell, or have a condition that makes temperature changes unsafe.',
     seconds: 90
   },
   {
     id: 'exercise',
     icon: 'dumbbell',
     title: 'Intense exercise',
-    sub: 'Burn the urge chemically',
-    action: 'A burst — sprint, push-ups, squats, jumping jacks — for ~5 minutes. Movement raises the same dopamine circuits porn hijacks, legally.',
+    sub: 'Change state with movement',
+    action: 'If it is safe for you, try a short burst of walking, squats, push-ups or jumping jacks for up to five minutes.',
     seconds: 300
   },
   {
@@ -61,7 +58,7 @@ export const TIPP = [
     icon: 'activity',
     title: 'Paired relaxation',
     sub: 'Tense, hold, release',
-    action: 'Tense a muscle group 5s, release and notice the drop. Go hands → arms → shoulders → face. 60 seconds of this kills the "must act NOW" feeling.',
+    action: 'Tense a muscle group for 5 seconds, then release and notice the change. Go hands → arms → shoulders → face for about a minute.',
     seconds: 60
   }
 ]
@@ -73,7 +70,7 @@ export const DENTS = [
     id: 'deny',
     icon: 'rewind',
     title: 'Deny / Delay',
-    text: '"Not now — maybe in 15 minutes." The urge will fade before the timer does. Delay is the whole game.'
+    text: '"Not now — I will check again in 10 minutes." A short delay creates room for a different choice.'
   },
   {
     id: 'escape',
@@ -85,19 +82,19 @@ export const DENTS = [
     id: 'neutralize',
     icon: 'refresh',
     title: 'Neutralize',
-    text: 'Argue with the craving-thought. "This is my dopamine system talking, not a fact about me."'
+    text: 'Unhook from the craving-thought: "I am noticing the thought that I need this. A thought is not an instruction."'
   },
   {
     id: 'tasks',
     icon: 'bolt',
     title: 'Tasks',
-    text: 'Do something absorbing for 10 minutes. Boredom feeds urges; engaged attention starves them.'
+    text: 'Do something absorbing for 10 minutes. Changing attention and setting can make the urge easier to handle.'
   },
   {
     id: 'swap',
     icon: 'sparkle',
     title: 'Swap',
-    text: 'Substitute a different dopamine source — the Activities tab is a menu of legal ones.'
+    text: 'Choose an activity that serves the same need—stimulation, connection, rest, comfort or mastery.'
   }
 ]
 
@@ -107,15 +104,27 @@ export const BREATH_CYCLES = [
   { name: 'Quick reset', inhale: 3, exhale: 5, cycles: 8 }
 ]
 
+// Short, interactive coping exercises. Each item opens a purpose-built guided
+// interaction rather than a text lesson or passive timer.
+export const GUIDED_EXERCISES = [
+  { id: 'five-senses', title: 'Five-senses grounding', sub: '5 · 4 · 3 · 2 · 1', icon: 'target', duration: '2–3 min', tone: 'mint' },
+  { id: 'muscle-release', title: 'Muscle release', sub: 'Tense gently, then let go', icon: 'activity', duration: '2 min', tone: 'violet' },
+  { id: 'mindful-observe', title: 'Mindful observation', sub: 'Notice without following', icon: 'eye', duration: '1 min', tone: 'sky' },
+  { id: 'leave-room', title: 'Leave the room', sub: 'Create physical distance', icon: 'door', duration: '20 sec', tone: 'rose' },
+  { id: 'values-choice', title: 'Values decision', sub: 'Choose what you move toward', icon: 'compass', duration: '1 min', tone: 'amber' },
+  { id: 'location-shift', title: 'Change location', sub: 'Confirm a safer setting', icon: 'map', duration: '1–3 min', tone: 'mint' },
+  { id: 'delayed-choice', title: 'Delay the choice', sub: 'Decide later, not now', icon: 'clock', duration: '2–10 min', tone: 'violet' }
+]
+
 // Replacement activities grouped by dopamine function. Based on:
 // - behavioral activation (fun + mastery are the two healthy dopamine fuels)
 // - the ADHD levers: exercise, novelty (channeled), social, sleep, sensory reset
 export const ACTIVITIES = [
   {
     mood: 'novelty',
-    label: 'Novelty fix',
+    label: 'Try something new',
     icon: 'sparkle',
-    sub: 'Your brain craves the new. Feed it deliberately.',
+    sub: 'Use novelty on purpose instead of on autopilot.',
     items: [
       { name: 'Try a new recipe or cuisine', seconds: 900 },
       { name: 'New music / a playlist you\'ve never heard', seconds: 600 },
@@ -129,7 +138,7 @@ export const ACTIVITIES = [
     mood: 'physical',
     label: 'Move',
     icon: 'dumbbell',
-    sub: 'Exercise is a documented ADHD lever: dopamine + norepinephrine.',
+    sub: 'Movement can support mood, attention and coping.',
     items: [
       { name: 'Run or jog 15–30 min', seconds: 1500 },
       { name: 'Push-ups / squats / burpees burst', seconds: 300 },
@@ -142,7 +151,7 @@ export const ACTIVITIES = [
     mood: 'social',
     label: 'Connect',
     icon: 'users',
-    sub: 'Isolation is the habitat urges grow in. One real human is a shield.',
+    sub: 'Connection can interrupt isolation and add support.',
     items: [
       { name: 'Call or text someone real', seconds: 600 },
       { name: 'Go somewhere with people (cafe, gym)', seconds: 1200 },
@@ -154,7 +163,7 @@ export const ACTIVITIES = [
     mood: 'rest',
     label: 'Restore',
     icon: 'moon',
-    sub: 'Sleep debt raises dopamine hunger. Recharge instead of feed.',
+    sub: 'Fatigue can make deliberate choices harder. Restore first.',
     items: [
       { name: 'Eyes-closed rest or nap', seconds: 900 },
       { name: 'Daylight walk (sleep hygiene + mood)', seconds: 600 },
@@ -178,7 +187,7 @@ export const ACTIVITIES = [
     mood: 'mastery',
     label: 'Master',
     icon: 'edit',
-    sub: 'Achievement is the other healthy dopamine fuel. Stack small wins.',
+    sub: 'A small completed task can restore agency.',
     items: [
       { name: 'Do one small task you\'ve been avoiding', seconds: 600 },
       { name: 'Write, sketch, or build something', seconds: 1200 },
@@ -191,15 +200,15 @@ export const ACTIVITIES = [
 // Soft-fail milestone levels. Framing avoids rigid-abstinence shame:
 // streaks are evidence of momentum, never a score of worth.
 export const MILESTONES = [
-  { days: 1, name: 'First wave', line: 'You surfed the first urge. That is the whole mechanism.' },
-  { days: 3, name: 'Pattern breaker', line: 'Three days is where automatic loops start to loosen.' },
-  { days: 7, name: 'One week', line: 'A full cycle of your week — triggers seen, triggers named.' },
-  { days: 14, name: 'Two weeks', line: 'The loop is learning a new script.' },
-  { days: 30, name: 'Rewiring', line: 'A month. This is where receptor recalibration really happens.' },
-  { days: 60, name: 'Two months', line: 'Two full months. Your baseline is noticeably flatter-calmer.' },
-  { days: 90, name: 'Baseline restored', line: 'Three months. Most withdrawal-style symptoms have cleared.' },
-  { days: 180, name: 'Half year', line: 'Half a year. You are no longer "stopping"; you live differently.' },
-  { days: 365, name: 'A full year', line: 'A year of rewiring. The new script is the default.' }
+  { days: 1, name: 'First day', line: 'A day of practicing a different response.' },
+  { days: 3, name: 'Three days', line: 'Notice what helped and what made the pattern harder.' },
+  { days: 7, name: 'One week', line: 'A full weekly cycle gives you useful context.' },
+  { days: 14, name: 'Two weeks', line: 'Keep refining the plan around your actual patterns.' },
+  { days: 30, name: 'One month', line: 'Thirty days of choices worth learning from.' },
+  { days: 60, name: 'Two months', line: 'Keep building a life that makes the change sustainable.' },
+  { days: 90, name: 'Three months', line: 'Review progress by control and quality of life, not only time.' },
+  { days: 180, name: 'Half year', line: 'A long stretch of practicing your plan.' },
+  { days: 365, name: 'A full year', line: 'A year of intentional change and learning.' }
 ]
 
 export const VALUES = [
@@ -214,7 +223,7 @@ export const VALUES = [
 ]
 
 export const SELF_COMPASSION = [
-  'This is a dopamine-calibration problem, not a character flaw. ADHD brains run the same loop you are interrupting right now.',
+  'A difficult behavior pattern is not a character verdict. You can be accountable without attacking yourself.',
   'One slip is information. The only failure here is deciding one mistake erases everything and spiraling.',
   'Name what the urge was doing for you: escape? stimulation? numbing? That is a clue, not a confession.',
   'If your best friend just told you this, you would not shame them. Say to yourself what you would say to them.'
@@ -262,7 +271,7 @@ export const PROGRAM = [
         title: 'Your values, not a script',
         summary: 'Anchor your goal to the values that actually matter to you.',
         type: 'values',
-        text: 'Generic goals fade in three days. Goals tied to a value you actually hold survive contact with cravings. The ADHD brain follows what it finds meaningful — find what that is for you.',
+        text: 'Values can make a change goal more personally meaningful. Pick the parts of life you want this change to serve.',
         action: 'Pick the 3 values from onboarding that matter most.'
       },
       {
@@ -292,14 +301,14 @@ export const PROGRAM = [
         title: 'Internal triggers (HALT)',
         summary: 'Learn to name the feeling before it becomes an urge.',
         type: 'halt',
-        text: 'Hungry, Angry, Lonely, Tired — plus bored, stressed, anxious. Negative mood and craving intensity are the two strongest slip predictors. Name the state before it becomes an urge.',
+        text: 'Hungry, Angry, Lonely, Tired — plus bored, stressed and anxious. Track what tends to appear before your own urges instead of assuming one universal cause.',
         action: 'Tag the feeling every time you log an urge.'
       },
       {
         title: 'Sleep is a lever, not a luxury',
         summary: 'Treat sleep as a lever: two good nights weaken every trigger.',
         type: 'sleep',
-        text: 'Sleep deprivation suppresses the tonic dopamine baseline AND the prefrontal brake — both already taxed in ADHD. Two bad nights make every trigger stronger.',
+        text: 'Poor sleep can affect mood, attention and inhibitory control. Track sleep for a week and see whether it matters in your own pattern.',
         action: 'Log your sleep in the daily check-in for a week.'
       }
     ]
@@ -307,15 +316,15 @@ export const PROGRAM = [
   {
     week: 3,
     title: 'Engineer the environment',
-    goal: 'Change behavior without willpower',
+    goal: 'Make the desired action easier',
     minutes: '~10 min',
     methods: ['Habit replacement', 'Implementation intentions', 'Environmental design'],
     lessons: [
       {
-        title: 'Willpower is a broken tool here',
-        summary: 'Stop fighting with willpower — change the room instead.',
+        title: 'Change the environment',
+        summary: 'Add friction to the unwanted behavior and reduce friction for the alternative.',
         type: 'gate',
-        text: 'The prefrontal cortex is the compromised system — demanding "more willpower" from it is asking a sprained ankle to sprint. Environment beats discipline: reduce friction, not resistance.',
+        text: 'Relying on an in-the-moment decision is fragile. Device settings, location changes and pre-written plans can support the choice you made while calm.',
         action: 'Turn on the daily gate + blocklist. Phone not in the bedroom at night.'
       },
       {
@@ -327,17 +336,17 @@ export const PROGRAM = [
       },
       {
         title: 'The 10-minute rule',
-        summary: 'Learn the 10-minute rule: urges peak and pass.',
+        summary: 'Use a short delay to create room for a different action.',
         type: 'ten',
-        text: 'Urges are waves: they rise, peak, and fall within 10–20 minutes. Delay beats deny — ride it with a substitute activity.',
+        text: 'Urges change over time, but there is no universal countdown. Rate the urge, take a short coping action, then rate it again to learn what helps you.',
         action: 'Next urge: set 10 minutes and do a replacement activity.'
       }
     ]
   },
   {
     week: 4,
-    title: 'Refuel the reward system',
-    goal: 'Legal dopamine sources',
+    title: 'Build better alternatives',
+    goal: 'Meet the need another way',
     minutes: '~8 min',
     methods: ['Behavioral activation', 'Exercise'],
     lessons: [
@@ -345,21 +354,21 @@ export const PROGRAM = [
         title: 'Porn was doing a job',
         summary: 'Understand what porn was doing for you — then replace it.',
         type: 'reflect',
-        text: 'For ADHD brains, arousal was a form of self-medication — a dopamine substitute. You cannot remove the behavior without replacing its function, or the function finds a new outlet.',
+        text: 'The behavior may have served a function such as escape, stimulation, soothing or avoiding loneliness. A replacement works better when it serves the same function.',
         action: 'What was it doing for you — escape, stimulation, numbing? Name it.'
       },
       {
-        title: 'Exercise is the legal hit',
-        summary: 'Use exercise as the legal dopamine hit before risky hours.',
+        title: 'Use movement as support',
+        summary: 'Try movement before a time that is often difficult.',
         type: 'exercise',
-        text: 'Aerobic exercise raises dopamine and norepinephrine in the prefrontal cortex — the same circuits medication targets. 20–30 minutes before a high-risk window changes the chemistry of the hour.',
+        text: 'Exercise can support mood and executive function. Treat it as one coping option—not a cure or a guaranteed way to remove an urge.',
         action: 'Move 20+ min today, ideally before your peak trigger window.'
       },
       {
         title: 'Fun + mastery = the two fuels',
         summary: 'Schedule the two healthy fuels: fun and small wins.',
         type: 'activities',
-        text: 'Pleasure (novelty, play) and mastery (completion) are the two healthy dopamine streams. Schedule both; novelty is a drive to channel, not suppress.',
+        text: 'Behavioral activation often balances enjoyable activities with activities that create a sense of accomplishment. Schedule one of each.',
         action: 'Pick one Novelty and one Master activity this week.'
       }
     ]
@@ -386,10 +395,10 @@ export const PROGRAM = [
         action: 'Run the thought record next time a craving-thought appears.'
       },
       {
-        title: 'The shame trap is mechanical',
-        summary: 'Understand why shame backfires — and what to use instead.',
+        title: 'Respond without a shame spiral',
+        summary: 'Use accountability and compassion together.',
         type: 'selfcompassion',
-        text: 'Shame activates the amygdala, which suppresses the prefrontal cortex — the exact system you need. Shame does not motivate ADHD change; it disables it. Compassion is the functional tool.',
+        text: 'Harsh self-judgment can make it harder to learn from a setback. Name what happened, repair any harm, and choose the next useful action.',
         action: 'After any slip, read the self-compassion card. No punishment.'
       }
     ]
@@ -437,8 +446,8 @@ export const THOUGHT_EXAMPLES = [
 
 // The daily check-in prompts. Sleep + exercise are the two documented ADHD levers.
 export const DAILY_LEVERS = {
-  sleep: { label: 'Slept 7+ hrs', icon: 'moon', note: 'Sleep debt raises dopamine hunger' },
-  exercise: { label: 'Moved 20+ min', icon: 'dumbbell', note: 'Exercise is the legal dopamine hit' }
+  sleep: { label: 'Slept 7+ hrs', icon: 'moon', note: 'Sleep may affect attention and self-control' },
+  exercise: { label: 'Moved 20+ min', icon: 'dumbbell', note: 'Movement can support mood and coping' }
 }
 
 // ————— Daily Practices —————

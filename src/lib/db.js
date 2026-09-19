@@ -26,12 +26,18 @@ export async function addCheckin({ urge, mood, context }) {
   return db.checkins.add({ ts: Date.now(), urge, mood, context })
 }
 
-export async function addSlip({ urge = null, mood = null, note = '', escalation = [], sleepBad = false }) {
-  return db.slips.add({ ts: Date.now(), urge, mood, note, escalation, sleepBad })
+export async function addSlip({ urge = null, mood = null, context = null, note = '', escalation = [], sleepBad = false }) {
+  return db.slips.add({ ts: Date.now(), urge, mood, context, note, escalation, sleepBad })
 }
 
-export async function addPanic({ completed, urge = null }) {
-  return db.panics.add({ ts: Date.now(), completed, urge })
+export async function addPanic({ completed = false, startUrge = null, endUrge = null, actions = [] } = {}) {
+  return db.panics.add({ ts: Date.now(), completed, startUrge, endUrge, actions, durationSec: 0 })
+}
+
+export async function updatePanic(id, patch) {
+  if (!id) return
+  const plain = JSON.parse(JSON.stringify(patch))
+  return db.panics.update(id, plain)
 }
 
 export async function getCheckins(limit = 500) {
