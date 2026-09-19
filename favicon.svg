@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="110" fill="#0f172a"/>
+  <rect x="105" y="70" width="302" height="372" rx="44" fill="#1e2a44" stroke="#2b3d5c" stroke-width="6"/>
+  <rect x="140" y="100" width="232" height="84" fill="#0a1220" stroke="#334155" stroke-width="4"/>
+  <text x="360" y="150" font-family="Segoe UI" font-size="46" font-weight="bold" fill="#5eead4" text-anchor="end">0</text>
+  <g fill="#334155" stroke="#46505f" stroke-width="3">
+    <rect x="128" y="208" width="46" height="42" rx="12"/>
+    <rect x="186" y="208" width="46" height="42" rx="12"/>
+    <rect x="244" y="208" width="46" height="42" rx="12"/>
+    <rect x="128" y="262" width="46" height="42" rx="12"/>
+    <rect x="186" y="262" width="46" height="42" rx="12"/>
+    <rect x="244" y="262" width="46" height="42" rx="12"/>
+    <rect x="128" y="316" width="46" height="42" rx="12"/>
+    <rect x="186" y="316" width="46" height="42" rx="12"/>
+    <rect x="244" y="316" width="46" height="42" rx="12"/>
+    <rect x="128" y="370" width="46" height="42" rx="12"/>
+    <rect x="186" y="370" width="46" height="42" rx="12"/>
+    <rect x="244" y="370" width="46" height="42" rx="12"/>
+  </g>
+  <g fill="#34d399">
+    <rect x="302" y="208" width="46" height="42" rx="12"/>
+    <rect x="302" y="262" width="46" height="42" rx="12"/>
+    <rect x="302" y="316" width="46" height="42" rx="12"/>
+    <rect x="302" y="370" width="46" height="42" rx="12"/>
+  </g>
+</svg>
